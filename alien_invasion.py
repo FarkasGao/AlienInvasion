@@ -51,31 +51,32 @@ class AlienInvasion:
             #pygame.display.flip()
             
             self.ship.update()
-    
+            
     def _check_events(self):
         """响应按键和鼠标事件"""
+        
+        def move(move_bool):
+            """移动"""
+            if event.key == pygame.K_RIGHT:
+                self.ship.moving_right = move_bool
+            if event.key == pygame.K_LEFT:
+                self.ship.moving_left = move_bool
+            if event.key == pygame.K_UP:
+                self.ship.moving_up = move_bool
+            if event.key == pygame.K_DOWN:  
+                self.ship.moving_down = move_bool
+                
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    self.ship.moving_right = True
-                if event.key == pygame.K_LEFT:
-                    self.ship.moving_left = True
-                if event.key == pygame.K_UP:
-                    self.ship.moving_up = True
-                if event.key == pygame.K_DOWN:
-                    self.ship.moving_down = True
+                if event.key == pygame.K_q:
+                    sys.exit()
+                move(True)
+                    
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT:
-                    self.ship.moving_right = False
-                if event.key == pygame.K_LEFT:
-                    self.ship.moving_left = False
-                if event.key == pygame.K_UP:
-                    self.ship.moving_up = False     
-                if event.key == pygame.K_DOWN:
-                    self.ship.moving_down = False
-    
+                move(False)
+                
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
         self.screen.fill(self.settings.bg_color)
