@@ -1,3 +1,16 @@
+# ======================================
+
+#describe:子弹类
+#author: FarkasG
+#CreateTime: #20/11/14#
+
+#Edition: v1.0
+#Update:
+#UpdateTime:
+#UpdateDescribe:
+
+#=======================================
+
 import pygame
 from pygame.sprite import Sprite
 

@@ -1,7 +1,3 @@
-import sys 
-import time
-import pygame
-
 # ======================================
 
 #describe:游戏主体
@@ -23,10 +19,14 @@ import pygame
 #UpdateDescribe:
 
 #=======================================
+import sys 
+import time
+import pygame
 
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     """管理游戏资源和行为的类"""
@@ -43,6 +43,8 @@ class AlienInvasion:
         
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+        self._create_fleet()
         self.shot_bool = False
         self.shot_time = 0
         
@@ -96,13 +98,44 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-           
+
+    def _create_fleet(self):
+        """创建外星人群"""
+        self._alien_capacity()
+        self._create_alien()
+        
+    def _alien_capacity(self):
+        # 创建一个外星人并计算一行可容纳多少个外星人。
+        # 外星人的间距为外星人宽度
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - (2 * alien_width)
+        self.number_aliens_x = available_space_x // (2 * alien_width)
+        
+        # 计算屏幕可以容纳多少行外星人
+        ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        self.number_rows = available_space_y // (2* alien_height)
+        
+    def _create_alien(self):
+        """创建一个外星人并将其放在当前行"""
+        for row_number in range(self.number_rows):
+            for alien_number in range(self.number_aliens_x+1):
+                alien = Alien(self)
+                alien_width, alien_height = alien.rect.size
+                alien.x = alien_width + 2* alien_width *alien_number
+                alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+                alien.rect.x = alien.x
+                self.aliens.add(alien)
+
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()    
+        self.aliens.draw(self.screen)
+        
         pygame.display.flip()
         
 if __name__ == "__main__":
