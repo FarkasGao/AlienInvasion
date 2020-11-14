@@ -7,12 +7,16 @@ import pygame
 #describe:游戏主体tff
 #author: FarkasG
 #CreateTime: #20/11/11#
-#Edition: v1.1
+#Edition: v1.2
 
 #Update:v1.1
 #UpdateTime:20/11/12
 #UpdateDescribe:重构run_game()方法 将其差分成两个辅助方法(helper method):
 #                _check_events(), _update_screen()
+
+#Update:v1.2
+#UpdateTime:20/11/14
+#UpdateDescribe:增加子弹相关方法
 
 #=======================================
 
@@ -26,7 +30,10 @@ class AlienInvasion:
         """初始化游戏并创建游戏资源"""
         pygame.init()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        
+        self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
+        self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
         
         self.ship = Ship(self)
@@ -54,29 +61,29 @@ class AlienInvasion:
             
     def _check_events(self):
         """响应按键和鼠标事件"""
-        
-        def move(move_bool):
-            """移动"""
-            if event.key == pygame.K_RIGHT:
-                self.ship.moving_right = move_bool
-            if event.key == pygame.K_LEFT:
-                self.ship.moving_left = move_bool
-            if event.key == pygame.K_UP:
-                self.ship.moving_up = move_bool
-            if event.key == pygame.K_DOWN:  
-                self.ship.moving_down = move_bool
                 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for self.event in pygame.event.get():
+            if self.event.type == pygame.QUIT:
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+            elif self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_q:
                     sys.exit()
-                move(True)
+                self._move(True)
                     
-            elif event.type == pygame.KEYUP:
-                move(False)
+            elif self.event.type == pygame.KEYUP:
+                self._move(False)
                 
+    def _move(self, move_bool):
+        """移动"""
+        if self.event.key == pygame.K_RIGHT:
+            self.ship.moving_right = move_bool
+        if self.event.key == pygame.K_LEFT:
+            self.ship.moving_left = move_bool
+        if self.event.key == pygame.K_UP:
+            self.ship.moving_up = move_bool
+        if self.event.key == pygame.K_DOWN:  
+            self.ship.moving_down = move_bool            
+    
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
         self.screen.fill(self.settings.bg_color)
