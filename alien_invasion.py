@@ -54,8 +54,24 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._bullet()
+            self._update_aliens()
             self._update_screen()
             
+    def _check_fleet_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+    def _change_fleet_direction(self):
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *=-1
+            
+    def _update_aliens(self):   
+        """更新外星人群中所有外星人的位置"""
+        self._check_fleet_edges()   
+        self.aliens.update()
+        
     def _check_events(self):
         """响应按键和鼠标事件"""
                 
@@ -98,6 +114,8 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+                
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
     def _create_fleet(self):
         """创建外星人群"""
@@ -109,12 +127,12 @@ class AlienInvasion:
         # 外星人的间距为外星人宽度
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
-        available_space_x = self.settings.screen_width - (2 * alien_width)
+        available_space_x = self.settings.screen_width - (1 * alien_width)
         self.number_aliens_x = available_space_x // (2 * alien_width)
         
         # 计算屏幕可以容纳多少行外星人
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        available_space_y = (self.settings.screen_height - (2 * alien_height) - ship_height)
         self.number_rows = available_space_y // (2* alien_height)
         
     def _create_alien(self):
@@ -123,8 +141,8 @@ class AlienInvasion:
             for alien_number in range(self.number_aliens_x+1):
                 alien = Alien(self)
                 alien_width, alien_height = alien.rect.size
-                alien.x = alien_width + 2* alien_width *alien_number
-                alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+                alien.x = alien_width + 1.5* alien_width *alien_number
+                alien.rect.y = alien.rect.height + 1.5 * alien.rect.height * row_number
                 alien.rect.x = alien.x
                 self.aliens.add(alien)
 
