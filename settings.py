@@ -23,6 +23,7 @@ class Settings:
         
         # 飞船设置
         self.ship_speed = 3
+        self.ship_limit = 3
         
         # 子弹设置
         self.bullet_speed = 2.0
